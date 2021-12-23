@@ -5,48 +5,132 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject FirstBtn;
+    public GameObject RelatedToAttack;
+    public GameObject RelatedToSkill;
+
+    //공격 관련
+    [HideInInspector]
+    public bool attackBtnIsClicked = false;
+    [HideInInspector]
+    public int countAtAttack;
     public Text countText;
 
+    //스킬 관련
     [HideInInspector]
-    public int countAtAttack = 3;
+    public bool skillBtnIsClicked = false;
+
+
+    bool[] btnIsWorking = new bool[4];
+
+
+
 
     static public UIManager instance;
     private void Awake()
     {
         instance = this;
-        countText.enabled = false;
+        RelatedToAttack.SetActive(false);
+        RelatedToSkill.SetActive(false);
+        countAtAttack = 3;
+        
+        for(int i=0; i<4; i++)
+        {
+            btnIsWorking[i] = false;
+        }
+        btnIsWorking[0] = attackBtnIsClicked;
+        btnIsWorking[1] = skillBtnIsClicked;
+    }
+
+    private void Update()
+    {
+        btnIsWorking[0] = attackBtnIsClicked;
+        btnIsWorking[1] = skillBtnIsClicked;
     }
 
     //유령과 만나게 될 시 누르는 버튼 동작
-    public void attack()
+    public void attackBtn()
     { 
-        if (Attack.instance.isClickedAttackBtn == false)
+        if (checkBtnIsWorking() == false)
         {
-            Attack.instance.MakeCompartment();
-            Attack.instance.isClickedAttackBtn = true;
-        }
-      
+            if (attackBtnIsClicked == false)
+            {
+                Attack.instance.MakeCompartment();
+                attackBtnIsClicked = true;
+            }
+        }   
     }
 
-    void Skill()
+    public void SkillBtn()
+    {
+        if (checkBtnIsWorking() == false)
+        {
+            if (skillBtnIsClicked == false)
+            {
+                FirstBtn.SetActive(false);
+                RelatedToSkill.SetActive(true);
+
+                skillBtnIsClicked = true;
+            }
+        }    
+    }
+
+    void ItemBtn()
     {
 
     }
 
-    void Item()
+    void RunBtn()
     {
 
     }
 
-    void Run()
-    {
-
-    }
-
+    //공격 관련 
     public void CountDownAtAttak()
     {
         countText.text = countAtAttack.ToString();
         Debug.Log("카운트 다운 함수 동작");
         --countAtAttack;
+    }
+
+    //스킬 관련
+    public void LockUp()
+    {
+        //LockUp하는 함수 동작시키기
+        Skill.instance.MakeVariousColorCompartment();
+
+        //가두기와 포획 UI 없애기
+        RelatedToSkill.SetActive(false);
+    }
+
+    public void Capture()
+    {
+        //Capture하는 함수 동작시키기
+        //가두기와 포획 UI 없애기
+        RelatedToSkill.SetActive(false);
+    }
+
+
+
+
+
+    //다른 버튼을 이미 눌러 동작중인지 체크한다.
+    bool checkBtnIsWorking()
+    {
+        for(int i=0; i<4; i++)
+        {
+            if(btnIsWorking[i] == true)
+            {
+                return true; //동작중
+            }
+        }
+        return false; //동작x
+    }
+
+
+    public void ActivateFirstBtn()
+    {
+        skillBtnIsClicked = false;
+        FirstBtn.SetActive(true);
     }
 }//End Class

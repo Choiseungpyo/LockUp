@@ -7,8 +7,6 @@ public class Attack : MonoBehaviour
     public GameObject Compartment;
     GameObject createdCompartment;
     [HideInInspector]
-    public bool isClickedAttackBtn = false;
-    [HideInInspector]
     public int[] clickedCompartment = new int[5];
 
     [HideInInspector]
@@ -30,7 +28,7 @@ public class Attack : MonoBehaviour
 
     private void Update()
     {
-        if (isClickedAttackBtn == true)
+        if (UIManager.instance.attackBtnIsClicked == true)
         {
             if (playerPickAllOfThem != true)
             {
@@ -38,9 +36,8 @@ public class Attack : MonoBehaviour
             }
             if(playerPickAllOfThem == true && alreadyWorking == false) //playerPickAllOfThem == true && 한번만 동작되도록
             {
-                UIManager.instance.countText.enabled = true;
+                UIManager.instance.RelatedToAttack.SetActive(true);
                 StartCoroutine(CountDown());
-                Debug.Log("코루틴 이후");
                 Invoke("ChooseGhostRandPos", 3);
                 Invoke("CompareGhostAndPlayerCompartment",3);
                 Invoke("ResetVariable", 5);
@@ -111,6 +108,9 @@ public class Attack : MonoBehaviour
             if (randPos == clickedCompartment[i])
             {
                 Debug.Log("플레이어가 선택한 칸과 유령이 선택한 칸이 같습니다.");
+                Ghost.instance.ghost.GetComponent<SpriteRenderer>().color = Color.red;
+
+
                 break;
             }
             else
@@ -118,6 +118,7 @@ public class Attack : MonoBehaviour
                 if(i==4)
                 {
                     Debug.Log("플레이어가 선택한 칸과 유령이 선택한 칸이 다릅니다.");
+                    Ghost.instance.ghost.GetComponent<SpriteRenderer>().color = Color.blue;
                 }   
             }
         }
@@ -130,7 +131,7 @@ public class Attack : MonoBehaviour
             clickedCompartment[i] = 0;
         }
 
-        isClickedAttackBtn = false;
+        UIManager.instance.attackBtnIsClicked = false;
         playerPickAllOfThem = false;
         alreadyWorking = false;
 
@@ -140,6 +141,7 @@ public class Attack : MonoBehaviour
         }
         Ghost.instance.ghost.transform.position = new Vector3(0, 0, 0);
         Player.instance.ClickedObj = null;
+        Ghost.instance.ghost.GetComponent<SpriteRenderer>().color = Color.white;
         Destroy(createdCompartment);
         Debug.Log("리셋되었습니다.");
     }
@@ -153,6 +155,6 @@ public class Attack : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
         }
         UIManager.instance.countAtAttack = 3;
-        UIManager.instance.countText.enabled = false;
+        UIManager.instance.RelatedToAttack.SetActive(false);
     }
 }//End Class
