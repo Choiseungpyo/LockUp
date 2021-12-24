@@ -4,18 +4,34 @@ using UnityEngine;
 
 public class Skill : MonoBehaviour
 {
-    public GameObject VariousColorCompartment;//프리팹
-    public GameObject SelectedBorder; //프리팹
-    public GameObject CompartmentForLockUp; //프리팹
+    //프리팹
+    public GameObject VariousColorCompartment;
+    public GameObject SelectedBorder; 
+    public GameObject CompartmentForLockUp;
+    public GameObject Selected4ScaleBoder;
+    public GameObject RestrictedSpace9AndSelected4Space;
 
-    GameObject selectedBorder; //실제 사용 오브젝트
-    GameObject compartmentForLockUp; //실제 사용 오브젝트
-    GameObject variousColorCompartment; //실제 사용 오브젝트
+    //실제 사용 오브젝트
+    GameObject selectedBorder; 
+    GameObject compartmentForLockUp; 
+    GameObject variousColorCompartment;
+    GameObject selected4ScaleBorder;
+    GameObject restrictedSpace9AndSelected4Space;
 
     bool colorIsSelected = false;
     bool moveSelectedBorder = false;
-    bool useSkill1 = false;
+    [HideInInspector]
+    public bool useSkill1 = false;
     int selectedColorIndex = 0;
+    bool lockUpFirstTime = false;
+
+    //스킬2
+    bool spaceIsSelected = false;
+    [HideInInspector]
+    public bool useSkill2 = false;
+    int ghostRandPos;
+    int selectedSpaceNum;
+    bool ghostIsCaptured = false;
 
     float[] variousColorCompartmentPos = new float[9];
 
@@ -61,6 +77,15 @@ public class Skill : MonoBehaviour
             }
         }
 
+        if(useSkill2 == true)
+        {
+            Choose4ScaleCompartment();
+        }
+
+        if(ghostIsCaptured == true)
+        {
+            Destroy(compartmentForLockUp);
+        }
     }
 
 
@@ -69,11 +94,17 @@ public class Skill : MonoBehaviour
 
 
 
-        //스킬 2개 중 선택하게 하기
-        //스킬 1 - 가두기
-        //1. 색깔선택 : 왼->오른쪽으로 선택칸 이동
-        //2. 가두기 : 유령을 해당 공간안에 집어넣는다.
+    //스킬 2개 중 선택하게 하기
+    //스킬 1 - 가두기
+    //1. 색깔선택 : 왼->오른쪽으로 선택칸 이동
+    //2. 가두기 : 유령을 해당 공간안에 집어넣는다.
 
+    //스킬 2 - 포획
+    //1. 색깔 선택:
+    //2. 포획 : 2x2 정사각형 4군데 중 한 정사각형 선택
+
+
+    //스킬1
     public void MakeVariousColorCompartment() //여러색깔칸 만들기
     {
         variousColorCompartment = Instantiate(VariousColorCompartment, new Vector3(0, -3.5f, 0), Quaternion.identity);
@@ -92,10 +123,10 @@ public class Skill : MonoBehaviour
 
     void LockUpGhost()
     {
-        if(useSkill1 == false)
+        if(lockUpFirstTime == false)
         {
             compartmentForLockUp = Instantiate(CompartmentForLockUp, Vector3.zero, Quaternion.identity);
-            useSkill1 = true;
+            lockUpFirstTime = true;
         }  
         compartmentForLockUp.GetComponent<SpriteRenderer>().material.color = ChangeColorIndexToColorString();
         Debug.Log(ChangeColorIndexToColorString());
@@ -104,6 +135,130 @@ public class Skill : MonoBehaviour
 
 
     //스킬 2 - 포획
+    public void MakeCompartment9()
+    {
+        restrictedSpace9AndSelected4Space = Instantiate(RestrictedSpace9AndSelected4Space, Vector3.zero, Quaternion.identity);
+
+        Choose4ScaleCompartment();
+    }
+
+    void Choose4ScaleCompartment()
+    {
+        if (Player.instance.ClickedObj == null)
+        {
+            return;
+        }
+        //1 2 3
+        //4 5 6
+        //7 8 9
+
+        //1,2,4,5 -> 정사각형 1
+        //2,3,5,6 -> 정사각형 2
+        //4,5,7,8 -> 정사각형 3
+        //5,6,8,9 -> 정사각형 4
+
+        while (spaceIsSelected == false)
+        {      
+            for (int i = 1; i <= 4; i++)
+            {
+                if (Player.instance.ClickedObj.name.Contains(i.ToString()))
+                {
+                    selectedSpaceNum = i;
+                    switch (i)
+                    {
+                        case 1:
+                            selected4ScaleBorder = Instantiate(Selected4ScaleBoder, new Vector3(-0.7f, 0.6f, 0), Quaternion.identity);
+                            selected4ScaleBorder.GetComponent<SpriteRenderer>().color = ChangeColorIndexToColorString();
+                            spaceIsSelected = true;
+                            Debug.Log("1");
+                            Invoke("SetGhostRandPos", 1);
+                            break; ;
+                        case 2:
+                            selected4ScaleBorder = Instantiate(Selected4ScaleBoder, new Vector3(0.7f, 0.6f, 0), Quaternion.identity);
+                            selected4ScaleBorder.GetComponent<SpriteRenderer>().color = ChangeColorIndexToColorString();
+                            spaceIsSelected = true;
+                            Debug.Log("2");
+                            Invoke("SetGhostRandPos", 1);
+                            break; ;
+                        case 3:
+                            selected4ScaleBorder = Instantiate(Selected4ScaleBoder, new Vector3(-0.7f, -0.7f, 0), Quaternion.identity);
+                            selected4ScaleBorder.GetComponent<SpriteRenderer>().color = ChangeColorIndexToColorString();
+                            spaceIsSelected = true;
+                            Debug.Log("3");
+                            Invoke("SetGhostRandPos", 1);
+                            break; ;
+                        case 4:
+                            selected4ScaleBorder = Instantiate(Selected4ScaleBoder, new Vector3(0.7f, -0.7f, 0), Quaternion.identity);
+                            selected4ScaleBorder.GetComponent<SpriteRenderer>().color = ChangeColorIndexToColorString();
+                            spaceIsSelected = true;
+                            Debug.Log("4");
+                            Invoke("SetGhostRandPos", 1);
+                            break; ;
+                    }
+                }
+            }
+        }   
+    }
+
+    void SetGhostRandPos()
+    {
+        ghostRandPos = Random.Range(1, 10); //1~9
+        Debug.Log("유령이 선택한 칸:" + ghostRandPos);
+        Ghost.instance.ghost.transform.position = GameObject.Find(ghostRandPos.ToString()).transform.position;
+        CompareSelectedSpaceToGhostPos();
+    }
+
+    void CompareSelectedSpaceToGhostPos()
+    {
+        switch(selectedSpaceNum)
+        {
+            case 1:
+                if (ghostRandPos == 1 || ghostRandPos == 2 || ghostRandPos == 4 || ghostRandPos == 5)
+                {
+                    Debug.Log("유령과 선택한 공간의 위치가 일치합니다.");
+                    ghostIsCaptured = true;
+                }
+                else
+                    Debug.Log("유령과 선택한 공간의 위치가 일치하지 않습니다.");
+
+                Invoke("ClearScreenRegardingSkill2", 1);
+                break;
+            case 2:
+                if (ghostRandPos == 2 || ghostRandPos == 3 || ghostRandPos == 5 || ghostRandPos == 6)
+                {
+                    Debug.Log("유령과 선택한 공간의 위치가 일치합니다.");
+                    ghostIsCaptured = true;
+                }
+                else
+                    Debug.Log("유령과 선택한 공간의 위치가 일치하지 않습니다.");
+
+                Invoke("ClearScreenRegardingSkill2", 1);
+                break;
+            case 3:
+                if (ghostRandPos == 4 || ghostRandPos == 5 || ghostRandPos == 7 || ghostRandPos == 8)
+                {
+                    Debug.Log("유령과 선택한 공간의 위치가 일치합니다.");
+                    ghostIsCaptured = true;
+                }
+                else
+                    Debug.Log("유령과 선택한 공간의 위치가 일치하지 않습니다.");
+
+                Invoke("ClearScreenRegardingSkill2", 1);
+                break;
+            case 4:
+                if (ghostRandPos == 5 || ghostRandPos == 6 || ghostRandPos == 8 || ghostRandPos == 9)
+                {
+                    Debug.Log("유령과 선택한 공간의 위치가 일치합니다.");
+                    ghostIsCaptured = true;
+                }
+                else
+                    Debug.Log("유령과 선택한 공간의 위치가 일치하지 않습니다.");
+
+                Invoke("ClearScreenRegardingSkill2", 1);
+                break;
+        }
+    }
+
 
 
 
@@ -122,11 +277,25 @@ public class Skill : MonoBehaviour
 
             if (colorIsSelected == true) //색깔을 선택했다면 코루틴 종료
             {
-                selectedColorIndex = i;
-                Debug.Log("색깔 인덱스:" + i);
-                Invoke("LockUpGhost", 1.5f);
-                Invoke("ClearScreenRegardingSkill1", 1.5f);
-                break;
+                if(useSkill1 == true)
+                {
+                    selectedColorIndex = i;
+                    //Debug.Log("색깔 인덱스:" + i);
+                    Invoke("LockUpGhost", 1.5f);
+                    Invoke("ClearScreenRegardingSkill1", 1.5f);
+                    break;
+                }
+                
+                if(useSkill2 == true)
+                {
+                    selectedColorIndex = i;
+                    Invoke("MakeCompartment9", 1.5f);
+                    Destroy(variousColorCompartment,1);
+                    Destroy(selectedBorder,1);
+                    
+                    break;
+                }
+                
             }
 
             yield return new WaitForSeconds(0.25f);
@@ -137,6 +306,8 @@ public class Skill : MonoBehaviour
             }
         }
     }
+
+
 
 
     Vector4 ChangeColorIndexToColorString()
@@ -172,10 +343,34 @@ public class Skill : MonoBehaviour
         Destroy(selectedBorder);
         UIManager.instance.ActivateFirstBtn();
         colorIsSelected = false;
+        useSkill1 = false;
     }
 
-    
+    void ClearScreenRegardingSkill2()
+    {
+        //9칸짜리
+        Destroy(restrictedSpace9AndSelected4Space);
+        //선택칸
+        Destroy(selected4ScaleBorder);
+        //유령
+        if(ghostIsCaptured == true)
+        {
+            //Destroy(Ghost.instance.ghost);
+            Ghost.instance.ghost.transform.position = new Vector3(-100,- 100,0);
+            Ghost.instance.ghostIsDead = true;
+        }
+        else
+        {
+            Ghost.instance.ghost.transform.position = Vector3.zero;
+        }
 
+        UIManager.instance.ActivateFirstBtn();
+        colorIsSelected = false;
+        useSkill2 = false;
+        Player.instance.ClickedObj = null;
+        selectedSpaceNum = 0;
+        spaceIsSelected = false;
+    }
 
 
 

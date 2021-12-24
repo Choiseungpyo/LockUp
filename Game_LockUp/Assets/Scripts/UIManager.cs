@@ -101,6 +101,7 @@ public class UIManager : MonoBehaviour
 
         //가두기와 포획 UI 없애기
         RelatedToSkill.SetActive(false);
+        Skill.instance.useSkill1 = true;
     }
 
     public void Capture()
@@ -108,6 +109,8 @@ public class UIManager : MonoBehaviour
         //Capture하는 함수 동작시키기
         //가두기와 포획 UI 없애기
         RelatedToSkill.SetActive(false);
+        Skill.instance.useSkill2 = true;
+        Skill.instance.MakeVariousColorCompartment();
     }
 
 

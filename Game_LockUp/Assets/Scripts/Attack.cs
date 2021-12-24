@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
-    public GameObject Compartment;
+    public GameObject Compartment9;
     GameObject createdCompartment;
     [HideInInspector]
     public int[] clickedCompartment = new int[5];
@@ -49,7 +49,7 @@ public class Attack : MonoBehaviour
     
     public void MakeCompartment()//9개의 칸 만들기
     {
-        createdCompartment =Instantiate(Compartment, new Vector3(0, 0, 0), Quaternion.identity);
+        createdCompartment =Instantiate(Compartment9, new Vector3(0, 0, 0), Quaternion.identity);
         Debug.Log("칸 생성완료");
     }
 

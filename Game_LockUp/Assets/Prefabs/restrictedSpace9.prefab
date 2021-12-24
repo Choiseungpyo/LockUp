@@ -875,7 +875,7 @@ GameObject:
   - component: {fileID: 7824390000114217862}
   - component: {fileID: 7824390000114217863}
   m_Layer: 8
-  m_Name: restricedSpace9
+  m_Name: restrictedSpace9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
