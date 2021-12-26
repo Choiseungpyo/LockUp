@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//UI의 버튼은 모바일에서 터치로 바꿔야한다.
+
+
 public class UIManager : MonoBehaviour
 {
     public GameObject FirstBtn;

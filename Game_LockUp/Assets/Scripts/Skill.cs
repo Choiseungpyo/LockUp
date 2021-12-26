@@ -31,20 +31,30 @@ public class Skill : MonoBehaviour
     public bool useSkill2 = false;
     int ghostRandPos;
     int selectedSpaceNum;
-    bool ghostIsCaptured = false;
+    [HideInInspector]
+    public bool ghostIsCaptured = false;
 
     float[] variousColorCompartmentPos = new float[9];
 
     //색깔
-    Vector4 colorRed = new Vector4(1, 0, 0, 1); //빨
-    Vector4 colorOrange = new Vector4(0, 140/255f,0,1); //주
-    Vector4 colorYellow = new Vector4(1, 225/255f, 0,1); //노
-    Vector4 colorGreen = new Vector4(35/255f, 170/255f, 20/255f, 1); //초
-    Vector4 colorBlue = new Vector4(0, 190/255f, 1, 1); //파
-    Vector4 colorIndigo = new Vector4(20/255f, 75/255f, 165/255f, 1); //남
-    Vector4 colorPurple = new Vector4(120/255f, 25/255f, 165/255f, 1); //보
-    Vector4 colorWhite = new Vector4(1,1,1,1); //흰
-    Vector4 colorBlack = new Vector4(0,0,0,1); //검
+    [HideInInspector]
+    public Vector4 colorRed = new Vector4(1, 0, 0, 1); //빨
+    [HideInInspector]
+    public Vector4 colorOrange = new Vector4(0, 140/255f,0,1); //주
+    [HideInInspector]
+    public Vector4 colorYellow = new Vector4(1, 225/255f, 0,1); //노
+    [HideInInspector]
+    public Vector4 colorGreen = new Vector4(35/255f, 170/255f, 20/255f, 1); //초
+    [HideInInspector]
+    public Vector4 colorBlue = new Vector4(0, 190/255f, 1, 1); //파
+    [HideInInspector]
+    public Vector4 colorIndigo = new Vector4(20/255f, 75/255f, 165/255f, 1); //남
+    [HideInInspector]
+    public Vector4 colorPurple = new Vector4(120/255f, 25/255f, 165/255f, 1); //보
+    [HideInInspector]
+    public Vector4 colorWhite = new Vector4(1,1,1,1); //흰
+    [HideInInspector]
+    public Vector4 colorBlack = new Vector4(0,0,0,1); //검
 
 
     static public Skill instance;
@@ -70,10 +80,22 @@ public class Skill : MonoBehaviour
     {
         if (moveSelectedBorder == true)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            //모바일 터치로 변환해야할 부분
+            //if (Input.GetKeyDown(KeyCode.Space))
+            //{
+            //    colorIsSelected = true;
+            //    moveSelectedBorder = false;
+            //}
+
+            if(Input.touchCount > 0)
             {
-                colorIsSelected = true;
-                moveSelectedBorder = false;
+                Touch touch = Input.GetTouch(0);
+
+                if(touch.phase == TouchPhase.Began)
+                {
+                    colorIsSelected = true;
+                    moveSelectedBorder = false;
+                }
             }
         }
 
@@ -355,9 +377,18 @@ public class Skill : MonoBehaviour
         //유령
         if(ghostIsCaptured == true)
         {
-            //Destroy(Ghost.instance.ghost);
-            Ghost.instance.ghost.transform.position = new Vector3(-100,- 100,0);
-            Ghost.instance.ghostIsDead = true;
+            if(Ghost.instance.ghostColor == selectedColorIndex) //유령과 포획 칸의 색깔이 같을때만 유령 포획
+            {
+                //Destroy(Ghost.instance.ghost);
+                Ghost.instance.ghost.transform.position = new Vector3(-100, -100, 0);
+                Ghost.instance.ghostIsDead = true;
+            }
+            else
+            {
+                ghostIsCaptured = false;
+                Debug.Log("유령과 포획 칸의 색깔이 같지 않습니다.");
+                Ghost.instance.ghost.transform.position = Vector3.zero;
+            }
         }
         else
         {
