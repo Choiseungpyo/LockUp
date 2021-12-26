@@ -81,22 +81,22 @@ public class Skill : MonoBehaviour
         if (moveSelectedBorder == true)
         {
             //모바일 터치로 변환해야할 부분
-            //if (Input.GetKeyDown(KeyCode.Space))
-            //{
-            //    colorIsSelected = true;
-            //    moveSelectedBorder = false;
-            //}
-
-            if(Input.touchCount > 0)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                Touch touch = Input.GetTouch(0);
-
-                if(touch.phase == TouchPhase.Began)
-                {
-                    colorIsSelected = true;
-                    moveSelectedBorder = false;
-                }
+                colorIsSelected = true;
+                moveSelectedBorder = false;
             }
+
+            //if (Input.touchCount > 0)
+            //{
+            //    Touch touch = Input.GetTouch(0);
+
+            //    if(touch.phase == TouchPhase.Began)
+            //    {
+            //        colorIsSelected = true;
+            //        moveSelectedBorder = false;
+            //    }
+            //}
         }
 
         if(useSkill2 == true)
@@ -106,7 +106,8 @@ public class Skill : MonoBehaviour
 
         if(ghostIsCaptured == true)
         {
-            Destroy(compartmentForLockUp);
+            Destroy(compartmentForLockUp, 1);
+            lockUpFirstTime = false;
         }
     }
 
